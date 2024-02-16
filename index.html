@@ -1,46 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
+        <script src="elements.js" type="text/javascript"></script>
+        <script src="todo.js" type="text/javascript"></script>
         <script src="main.js" type="text/javascript"></script>
         <link rel="stylesheet" type="text/css" href="styles.css"></link>
+        
+        <meta charset="UTF-8">
+        <title>Streaming Todo List</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
     </head>
-    <body>
+    <body onload="main()">
         <div class="app">
             <div class="content">
-                <div class="todo-list">
-                    <ul class="item-list">
+                <div class="item-list-wrapper">
+                    <ul id="todo-list" class="item-list">
                         <li class="item"><text>Coffee</text><button>START</button></li>
                         <li class="item"><text>Tea</text><button>START</button></li>
                         <li class="item"><text>Milk</text><button>START</button></li>
                     </ul>
-                    <form class="todo-form">
-                        <input></input>
-                        <button>+</button>
-                    </form>
+                    <div class="todo-form">
+                        <input title="new todo item" id="add-todo-text"></input>
+                        <button id="add-todo-button">+</button>
+                    </div>
                 </div>
                 <div class="focus">
                     <div class="timer">
-                        <h1>20:00:00</h1>
-                        <h1>20:00:00</h1>
-                        <h1>20:00:00</h1>
+                        <h1 id="start-timer">20:00:00</h1>
+                        <h1 id="elapsed-timer">20:00:00</h1>
+                        <h1 id="current-timer">20:00:00</h1>
                     </div>
                     <div class="on-progress item">
-                        <text>Doing stuff</text><button>DONE</button>
+                        <text id="current-item-text">Doing stuff</text>
+                        <button id="current-item-done">DONE</button>
                     </div>
                 </div>
-                <div class="done-list">
-                    <ul class="item-list">
+                <div class="item-list-wrapper">
+                    <ul id="done-list" class="item-list">
                         <li class="item"><text>Coffee</text><button>CANCEL</button></li>
                         <li class="item"><text>Tea</text><button>CANCEL</button></li>
                         <li class="item"><text>Milk</text><button>CANCEL</button></li>
                     </ul>
                 </div>
             </div>
-            <div class="loader">
-                <button>START</button>
-                <button>CLEAR</button>
-                <button>SAVE</button>
-                <button>LOAD</button>
+            <div class="loader-wrapper">
+                <div class="loader">
+                    <button id="start">START</button>
+                    <button id="sop">STOP</button>
+                    <button id="clear">CLEAR</button>
+                    <button id="save">SAVE</button>
+                    <button id="load">LOAD</button>
+                </div>
             </div>
         </div>
     </body>
