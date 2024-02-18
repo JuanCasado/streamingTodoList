@@ -6,59 +6,75 @@ let onProgress = null
 let done = []
 
 class Item {
-    constructor(text) {
+    constructor(id, text, createdAt, startedAt, stoppedAt, completedAt) {
+        this.id = id
         this.text = text
-        this.id = crypto.randomUUID()
+        this.createdAt = createdAt
+        this.startedAt = Array.isArray(startedAt)? startedAt : [startedAt]
+        this.stoppedAt = Array.isArray(stoppedAt)? stoppedAt : [stoppedAt]
+        this.completedAt = completedAt
     }
 }
 
-class OnProgressItem {
-    constructor(item) {
-        this.item = item
-        this.started = Date.now()
-    }
+// Create the items from scratch
 
-    done() {
-        return DoneItem(this.item)
-    }
+function createNewItem(text) {
+    const id = crypto.randomUUID()
+    const createdAt = Date.now()
+    const startedAt = []
+    const stoppedAt = []
+    const completedAt = null
+    toDo.push(new Item(
+        id,
+        text,
+        createdAt,
+        startedAt,
+        stoppedAt,
+        completedAt,
+    ))
+}
+
+function createTodoItem() {
     
-    toDo() {
-        return TodoItem(this.item)
-    }
 }
 
-class TodoItem {
-    constructor(item) {
-        this.item = item
-    }
+function createOnProgressItem() {
 
-    done() {
-        return DoneItem(this.item)
-    }
-
-    start() {
-        return OnProgressItem(this)
-    }
 }
 
-class DoneItem {
-    constructor(item) {
-        this.item = item
-        this.done = Date.now()
-    }
+function createDoneItem() {
 
-    toDo() {
-        return TodoItem(this.item)
-    }
-
-    start() {
-        return OnProgressItem(this)
-    }
 }
 
+// Create the items from load
 
-function setupInputs(inputs) {
-    console.log("SETTING UP!")
-    
-    inputs.todoList.appendChild(createItem("AWESOME!!!!!!!!! aaaa bbbbbbbbb kkkkkkkkk"));
+function loadNewItem(text) {
+    const id = crypto.randomUUID()
 }
+
+function loadTodoItem() {
+
+}
+
+function loadOnProgressItem() {
+
+}
+
+function loadDoneItem() {
+
+}
+
+// Change an item state
+
+function startItem() {
+
+}
+
+function startItem() {
+
+}
+
+// Delete items
+
+
+

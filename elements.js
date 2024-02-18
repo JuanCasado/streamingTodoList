@@ -1,3 +1,6 @@
+const clickEvent = "click"
+
+const inputNodeName = "INPUT"
 
 function getDOMInputs() {
     return {
@@ -30,4 +33,40 @@ function createItem(text) {
     // TODO: add callback to the button here?
     item.appendChild(itemButton)
     return item
+}
+
+function getText(item) {
+    if (item.nodeName == inputNodeName) {
+        return item.value
+    } else {
+        return item.innerText;
+    }
+
+}
+
+function clearText(item) {
+    if (item.nodeName == inputNodeName) {
+        item.value = ""
+    } else {
+        item.innerText = "";
+    }
+
+}
+
+function addItem(list, item) {
+    list.appendChild(item)
+}
+
+function addEventListener(element, eventName, callback) {
+    element.addEventListener(eventName, callback)
+}
+
+function updateList(source, htmlList) {
+    while (htmlList.lastElementChild) {
+        htmlList.removeChild(htmlList.lastElementChild);
+    }
+    for (const item of source) {
+        const htmlElement = createItem(item.text)
+        addItem(htmlList, htmlElement)
+    }
 }
