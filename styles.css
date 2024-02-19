@@ -43,17 +43,6 @@ h1 {
     margin: 10px;
 }
 
-.on-progress {
-    background-color: purple;
-    padding: 1em;
-    flex: 0;
-
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    flex-direction: column;
-}
-
 .item-list-wrapper {
     background-color: cyan;
     flex: 1;

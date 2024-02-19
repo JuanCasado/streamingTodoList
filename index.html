@@ -14,11 +14,7 @@
         <div class="app">
             <div class="content">
                 <div class="item-list-wrapper">
-                    <ul id="todo-list" class="item-list">
-                        <li class="item"><text>Coffee</text><button>START</button></li>
-                        <li class="item"><text>Tea</text><button>START</button></li>
-                        <li class="item"><text>Milk</text><button>START</button></li>
-                    </ul>
+                    <ul id="todo-list" class="item-list"></ul>
                     <div class="todo-form">
                         <input title="new todo item" id="add-todo-text"></input>
                         <button id="add-todo-button">CREATE</button>
@@ -30,17 +26,12 @@
                         <h1 id="elapsed-timer">20:00:00</h1>
                         <h1 id="current-timer">20:00:00</h1>
                     </div>
-                    <div class="on-progress item">
-                        <text id="current-item-text">Doing stuff</text>
-                        <button id="current-item-done">DONE</button>
+                    <div class="item-list-wrapper">
+                        <ul id="on-progress-list" class="item-list"></ul>
                     </div>
                 </div>
                 <div class="item-list-wrapper">
-                    <ul id="done-list" class="item-list">
-                        <li class="item"><text>Coffee</text><button>CANCEL</button></li>
-                        <li class="item"><text>Tea</text><button>CANCEL</button></li>
-                        <li class="item"><text>Milk</text><button>CANCEL</button></li>
-                    </ul>
+                    <ul id="done-list" class="item-list"></ul>
                 </div>
             </div>
             <div class="loader-wrapper">
