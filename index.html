@@ -3,6 +3,7 @@
     <head>
         <script src="elements.js" type="text/javascript"></script>
         <script src="todo.js" type="text/javascript"></script>
+        <script src="timers.js" type="text/javascript"></script>
         <script src="main.js" type="text/javascript"></script>
         <link rel="stylesheet" type="text/css" href="styles.css"></link>
         
@@ -16,15 +17,17 @@
                 <div class="item-list-wrapper">
                     <ul id="todo-list" class="item-list"></ul>
                     <div class="todo-form">
-                        <input title="new todo item" id="add-todo-text"></input>
-                        <button id="add-todo-button">CREATE</button>
+                        <div class="item">
+                            <input title="new todo item" id="add-todo-text"></input>
+                            <button id="add-todo-button">➕</button>
+                        </div>
                     </div>
                 </div>
                 <div class="focus">
                     <div class="timer">
-                        <h1 id="start-timer">20:00:00</h1>
-                        <h1 id="elapsed-timer">20:00:00</h1>
-                        <h1 id="current-timer">20:00:00</h1>
+                        <h1 id="start-timer">00:00:00</h1>
+                        <h1 id="elapsed-timer">00:00:00</h1>
+                        <h1 id="current-timer">00:00:00</h1>
                     </div>
                     <div class="item-list-wrapper">
                         <ul id="on-progress-list" class="item-list"></ul>

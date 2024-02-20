@@ -29,11 +29,11 @@ class ButtonAction {
         this.callback = callback
     }
 }
-const startButtonText = "START"
-const pauseButtonText = "PAUSE"
-const doneButtonText = "DONE"
-const restartButtonText = "RESTART"
-const cancelButtonText = "CANCEL"
+const startButtonText = "▶️"
+const pauseButtonText = "⏸️"
+const doneButtonText = "✅"
+const restartButtonText = "⬅️"
+const cancelButtonText = "❌"
 function createButtonAction(text, callback) {
     return new ButtonAction(text, callback)
 }
@@ -70,12 +70,16 @@ function getText(item) {
     }
 }
 
-function clearText(item) {
+function setText(item, text) {
     if (item.nodeName == inputNodeName) {
-        item.value = ""
+        item.value = text
     } else {
-        item.innerText = "";
+        item.innerText = text;
     }
+}
+
+function clearText(item) {
+    setText(item, "")
 }
 
 function addItem(list, item) {
