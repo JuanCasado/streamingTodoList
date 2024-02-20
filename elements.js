@@ -18,8 +18,10 @@ function getDOMInputs() {
         startButton: document.getElementById("start"),
         stopButton: document.getElementById("sop"),
         clearButton: document.getElementById("clear"),
-        saveButton: document.getElementById("save"),
         loadButton: document.getElementById("load"),
+
+        saveText: document.getElementById("save-text"),
+        saveButton: document.getElementById("save"),
     }
 }
 
@@ -115,7 +117,7 @@ async function loadFile() {
     if (files.length == 1) {
         const file = await files[0].getFile()
         const contents = await file.text()
-        return contents
+        return [file.name, contents]
     } else {
         console.error(`Unexpected number of files: ${files.length}`)
     }

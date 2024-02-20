@@ -1,4 +1,21 @@
 
+function fileNameToDisplay(fileName) {
+    if (fileName.endsWith(".json") && fileName.length > 5) {
+        fileName = fileName.slice(0, fileName.length - 5)
+    }
+    return fileName
+}
+
+function fileNameToStore(fileName) {
+    if (fileName === "") {
+        fileName = `todo-${Date.now()}.json`
+    }
+    if (!fileName.endsWith(".json")) {
+        fileName += ".json"
+    }
+    return fileName
+}
+
 function main() {
     const inputs = getDOMInputs()
     const lists = getItemLists()
@@ -15,12 +32,14 @@ function main() {
     })
 
     addEventListener(inputs.saveButton, clickEvent, () => {
-        saveFile(saveJSON(), `todo-${Date.now()}.json`, 'application/json');
+        const fileName = getText(inputs.saveText)
+        saveFile(saveJSON(), fileNameToStore(fileName), 'application/json');
     })
 
     addEventListener(inputs.loadButton, clickEvent, async () => {
-        const content = await loadFile()
+        const [name, content] = await loadFile()
         loadJSON(content)
+        setText(inputs.saveText, fileNameToDisplay(name))
     })
     
     addListListener(lists.toDo, listChangedEvent, () => {
