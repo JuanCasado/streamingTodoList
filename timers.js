@@ -5,11 +5,18 @@ class Timer extends EventTarget {
         super()
         this.interval = null
         this.offset = 0
+        this.updateInterval = 0
     }
 
     reset(updateInterval, offset) {
-        this.cancel()
-        this.interval = updateInterval? setInterval(()=>{ this.update() }, updateInterval) : null
+        if (this.updateInterval === updateInterval
+            && this.interval !== null
+            && this.offset === this.offset) {
+            return
+        }
+        this.stop()
+        this.updateInterval = updateInterval
+        this.start()
         if (offset === 0) {
             this.offset = 0
         } else {
@@ -32,12 +39,19 @@ class Timer extends EventTarget {
         return date.toLocaleTimeString()
     }
 
-    cancel() {
+    stop() {
         if (this.interval === null) {
             return
         }
         clearInterval(this.interval)
-        this.interval + null
+        this.interval = null
+    }
+
+    start() {
+        if (this.updateInterval) {
+            stop()
+            this.interval = setInterval(()=>{ this.update() }, this.updateInterval)
+        }
     }
 }
 
@@ -58,6 +72,16 @@ function frozenTimer(timer = new Timer()) {
 
 function elapsedTimer(timer = new Timer()) {
     timer.reset(500, Date.now())
+    return timer
+}
+
+function stopTimer(timer) {
+    timer.stop()
+    return timer
+}
+
+function startTimer(timer) {
+    timer.start()
     return timer
 }
 

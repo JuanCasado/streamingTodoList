@@ -20,6 +20,7 @@ function main() {
     const inputs = getDOMInputs()
     const lists = getItemLists()
     const timers = getTimersLists()
+    const selected = getSelected([lists.toDo, lists.onProgress, lists.done])
 
     addEventListener(inputs.addTodoButton, clickEvent, () => {
         const text = getText(inputs.addTodoText)
@@ -32,13 +33,13 @@ function main() {
     })
 
     addEventListener(inputs.saveButton, clickEvent, () => {
-        const fileName = getText(inputs.saveText)
-        saveFile(saveJSON(), fileNameToStore(fileName), 'application/json');
+        const fileName = fileNameToStore(getText(inputs.saveText))
+        saveFile(saveTodoJSON(), fileName, "application/json");
     })
 
     addEventListener(inputs.loadButton, clickEvent, async () => {
         const [name, content] = await loadFile()
-        loadJSON(content)
+        loadTodoJSON(content)
         setText(inputs.saveText, fileNameToDisplay(name))
     })
     
@@ -67,13 +68,46 @@ function main() {
         ])
     })
 
-    addTimerListener(timers.current, onTimerChangedEvent, () => {
-        setText(inputs.currentTimer, timers.current.getTime())
+    
+    addEventListener(inputs.startButton, clickEvent, async () => {
+        startTimer(timers.elapsed)
+        startTimer(timers.current)
+    })
+
+    addEventListener(inputs.stopButton, clickEvent, async () => {
+        stopTimer(timers.elapsed)
+        stopTimer(timers.current)
+    })
+
+    addTimerListener(timers.start, onTimerChangedEvent, () => {
+        setText(inputs.startTimer, timers.start.getTime())
     })
     addTimerListener(timers.elapsed, onTimerChangedEvent, () => {
         setText(inputs.elapsedTimer, timers.elapsed.getTime())
     })
-    addTimerListener(timers.start, onTimerChangedEvent, () => {
-        setText(inputs.startTimer, timers.start.getTime())
+    addTimerListener(timers.current, onTimerChangedEvent, () => {
+        setText(inputs.currentTimer, timers.current.getTime())
+    })
+
+
+    document.addEventListener('keyup', (event)=>{
+        switch(event.key) {
+            case 'ArrowUp': selected.move(UP); return
+            case 'ArrowDown': selected.move(DOWN); return
+            case 'ArrowLeft': selected.move(LEFT); return
+            case 'ArrowRigth': selected.move(RIGHT); return
+            case 'w': selected.change(UP); return
+            case 's': selected.change(DOWN); return
+            case 'a': selected.change(LEFT); return
+            case 'd': selected.change(RIGHT); return
+            case 'q': selected.delete(); return
+            case 'e': selected.edit(); return
+            case 'Space': selected.toggle(); return
+        }
+        console.log(event)
+    })
+
+    addSelectedListener(selected, selectedChangedEvent, ()=>{
+
     })
 }

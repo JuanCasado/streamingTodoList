@@ -9,6 +9,10 @@ class ItemList extends EventTarget {
         this.items = []
     }
 
+    update() {
+        this.dispatchEvent(new Event(listChangedEvent))
+    }
+
     push(item) {
         this.items.push(item)
         this.dispatchEvent(new Event(listChangedEvent))
@@ -80,14 +84,16 @@ class ItemList extends EventTarget {
         this.dispatchEvent(new Event(pushItemEvent))
     }
 
-    *getItems () {
-        for (const item of this.items) {
-            yield item
-        }
+    getItems() {
+        return this.items
     }
 
     hasItems() {
         return this.items.length > 0
+    }
+
+    get length() {
+        return this.items.length
     }
 }
 
@@ -224,11 +230,11 @@ function clear() {
     done.clear()
 }
 
-function saveJSON() {
+function saveTodoJSON() {
     return JSON.stringify(getItemLists())
 }
 
-function loadJSON(text) {
+function loadTodoJSON(text) {
     const json = JSON.parse(text)
     toDo.load(json["toDo"])
     onProgress.load(json["onProgress"])

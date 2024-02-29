@@ -105,17 +105,27 @@ button {
     margin-left: 0.5em;
     flex: 0;
     max-width: 5em;
+    height: 100%;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    height: 100%;
+    cursor: pointer;
 
     border-radius: 8px;
     background-color: white;
     color: black;
     border: 2px solid black;
+}
+
+button:hover {
+    background-color: rgb(230, 230, 230);
+}
+
+button:active {
+  background-color: rgb(190, 190, 190);
+  transform: translateY(1px);
 }
 
 text {

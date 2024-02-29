@@ -93,7 +93,6 @@ function addEventListener(element, eventName, callback) {
 }
 
 function updateList(source, htmlList, buttonActions = []) {
-    buttonActions = Array.isArray(buttonActions)? buttonActions : [buttonActions]
     while (htmlList.lastElementChild) {
         htmlList.removeChild(htmlList.lastElementChild);
     }
