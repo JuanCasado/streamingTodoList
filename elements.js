@@ -39,68 +39,123 @@ const cancelButtonText = "❌"
 function createButtonAction(text, callback) {
     return new ButtonAction(text, callback)
 }
-function createItemAction(action, id) {
-    return createButtonAction(action.text, ()=>action.callback(id))
+function createElementAction(action, id) {
+    return createButtonAction(action.text, () => action.callback(id))
 }
 
-function createItemButton(buttonAction) {
-    const itemButton = document.createElement("button")
-    itemButton.innerText = buttonAction.text
-    itemButton.onclick = buttonAction.callback
-    return itemButton
+function createElementButton(buttonAction) {
+    const elementButton = document.createElement("button")
+    elementButton.innerText = buttonAction.text
+    elementButton.onclick = buttonAction.callback
+    return elementButton
 }
 
-function createItem(text, buttonActions = []) {
-    // <li class="item"><text>{text}</text><button>START</button></li>
-    const item = document.createElement('li')
-    item.className = "item"
+function createElement(item, buttonActions = []) {
+    // <li id="uuid" class="item"><text>{text}</text><button>START</button></li>
+    const element = document.createElement('li')
+    element.className = "item"
+    element.id = item.id
     const itemText = document.createElement("text")
-    itemText.innerText = text
-    item.appendChild(itemText)
+    itemText.innerText = item.text
+    element.appendChild(itemText)
     for (const action of buttonActions) {
-        const itemButton = createItemButton(action)
-        item.appendChild(itemButton)
+        const elementButton = createElementButton(action)
+        element.appendChild(elementButton)
     }
-    return item
+    return element
 }
 
-function getText(item) {
-    if (item.nodeName == inputNodeName) {
-        return item.value
+function getText(element) {
+    if (element.nodeName == inputNodeName) {
+        return element.value
     } else {
-        return item.innerText;
+        return element.innerText;
     }
 }
 
-function setText(item, text) {
-    if (item.nodeName == inputNodeName) {
-        item.value = text
+function setText(element, text) {
+    if (element.nodeName == inputNodeName) {
+        element.value = text
     } else {
-        item.innerText = text;
+        element.innerText = text;
     }
 }
 
-function clearText(item) {
-    setText(item, "")
+function clearText(element) {
+    setText(element, "")
 }
 
-function addItem(list, item) {
-    list.appendChild(item)
+function addElement(list, element) {
+    list.appendChild(element)
 }
 
 function addEventListener(element, eventName, callback) {
     element.addEventListener(eventName, callback)
 }
 
-function updateList(source, htmlList, buttonActions = []) {
+function filterElements(list1, list2) {
+    const result = []
+    for (const elemten1 of list1) {
+        let missing = true
+        for (const elemten2 of list2) {
+            if (elemten1.id === elemten2.id) {
+                missing = false
+                break
+            }
+        }   
+        if (missing) {
+            result.push(elemten1)
+        }
+    }
+    return result
+}
+
+function updateList(items, htmlList, buttonActions = []) {
+    const elementsToRemove = filterElements(htmlList.children, items)
+    const itemsToAdd = filterElements(items, htmlList.children)
+    for (const element of elementsToRemove) {
+        htmlList.removeChild(element)
+    }
+    for (const item of itemsToAdd) {
+        const elementActions = buttonActions.map(action => createElementAction(action, item.id))
+        const htmlElement = createElement(item, elementActions)
+        addElement(htmlList, htmlElement)
+    }
+    const elements = [...htmlList.children]
     while (htmlList.lastElementChild) {
-        htmlList.removeChild(htmlList.lastElementChild);
+        htmlList.removeChild(htmlList.lastElementChild)
     }
-    for (const item of source) {
-        const itemActions = buttonActions.map(action => createItemAction(action, item.id))
-        const htmlElement = createItem(item.text, itemActions)
-        addItem(htmlList, htmlElement)
+    for (const item of items) {
+        for (const element of elements) {
+            if (item.id === element.id) {
+                htmlList.appendChild(element)
+                break
+            }
+        }
     }
+}
+
+const selectedClassname = "selected"
+function selectElement(item) {
+    const element = document.getElementById(item.id)
+    if (!element.className.includes(selectedClassname)) {
+        element.className += " " + selectedClassname
+    }
+}
+
+function unselectElement(item) {
+    const element = document.getElementById(item.id)
+    element.className = element.className.replace(selectedClassname, "").trim()
+}
+
+function editElement(item) {
+    const element = document.getElementById(item.id)
+    
+}
+
+function commitElement(item) {
+    const element = document.getElementById(item.id)
+    
 }
 
 function saveFile(content, fileName, contentType) {

@@ -19,11 +19,16 @@ class Selected extends EventTarget {
     }
     
     getIndex() {
-        return Math.min(this.getList().length-1, this.index)
+        return Math.max(Math.min(this.getList().length-1, this.index), 0)
     }
 
     getItem() {
-        return this.getList().items[this.getIndex()]
+        const index = this.getIndex()
+        const list = this.getList().items
+        if (index >= list.length) {
+            return null
+        }
+        return list[this.getIndex()]
     }
 
     
@@ -31,24 +36,33 @@ class Selected extends EventTarget {
         this.list = list
         this.index = index
         this.activate()
-        this.dispatchEvent(selectedChangedEvent)
+        this.dispatchEvent(new Event(selectedChangedEvent))
     }
     
     deactivate() {
         this.active = false
-        this.dispatchEvent(selectedChangedEvent)
+        this.dispatchEvent(new Event(selectedChangedEvent))
     }
     activate() {
+        if (this.getItem() === null) {
+            return
+        }
         this.active = true
-        this.dispatchEvent(selectedChangedEvent)
+        this.dispatchEvent(new Event(selectedChangedEvent))
     }
     toggle() {
+        if (this.getItem() === null) {
+            return
+        }
         this.active = !this.active
-        this.dispatchEvent(selectedChangedEvent)
+        this.dispatchEvent(new Event(selectedChangedEvent))
     }
 
     edit() {
         if (!this.active) {
+            return
+        }
+        if (this.getItem() === null) {
             return
         }
         this.getItem()
@@ -59,6 +73,9 @@ class Selected extends EventTarget {
         if (!this.active) {
             return
         }
+        if (this.getItem() === null) {
+            return
+        }
         this.getList().remove(this.getItem().id)
     }
 
@@ -66,64 +83,81 @@ class Selected extends EventTarget {
         if (!this.active) {
             return
         }
+        if (this.getItem() === null) {
+            return
+        }
         switch(direction) {
             case UP: {
                 const currentIndex = this.getIndex()
                 this.setIndex(currentIndex-1)
                 const futureIndex = this.getIndex()
-                console.log(UP, currentIndex, futureIndex)
                 const itemToMove = this.getList().items[currentIndex]
                 this.getList().items[currentIndex] = this.getList().items[futureIndex]
                 this.getList().items[futureIndex] = itemToMove
                 this.getList().update()
-            } return
+            } break
             case DOWN: {
                 const currentIndex = this.getIndex()
                 this.setIndex(currentIndex+1)
                 const futureIndex = this.getIndex()
-                console.log(DOWN, currentIndex, futureIndex)
                 const itemToMove = this.getList().items[currentIndex]
                 this.getList().items[currentIndex] = this.getList().items[futureIndex]
                 this.getList().items[futureIndex] = itemToMove
                 this.getList().update()
-            } return
+            } break
             case LEFT: {
                 const itemToMove = this.getItem()
                 this.getList().remove(itemToMove.id)
                 this.setList(this.list-1)
                 this.getList().push(itemToMove)
                 this.setIndex(this.getList().length-1)
-            } return
+            } break
             case RIGHT: {
                 const itemToMove = this.getItem()
                 this.getList().remove(itemToMove.id)
                 this.setList(this.list+1)
                 this.getList().push(itemToMove)
                 this.setIndex(this.getList().length-1)
-            } return
+                
+            } break
         }
-        this.dispatchEvent(selectedChangedEvent)
+        this.dispatchEvent(new Event(selectedChangedEvent))
     }
 
     setIndex(index) {
-        this.index = Math.min(Math.max(index, 0), this.getList().length-1)
+        this.index = Math.max(Math.min(index, this.getList().length-1), 0)
     }
 
     setList(list) {
-        this.list = Math.min(Math.max(list, 0), this.listArray.length-1)
+        if (list < 0) {
+            list = this.listArray.length + (-1 * list)
+        }
+        this.list = Math.max(Math.min(list % this.listArray.length, this.listArray.length-1), 0)
     }
 
     change(direction) {
+        if (this.getItem() === null) {
+            return
+        }
         if (!this.active) {
             return
         }
         switch(direction) {
-            case UP: this.setIndex(this.index-1); return
-            case DOWN: this.setIndex(this.index+1); return
-            case LEFT: this.setList(this.list-1); return
-            case RIGHT: this.setList(this.list+1); return
+            case UP:    this.setIndex(this.getIndex()-1);   break
+            case DOWN:  this.setIndex(this.getIndex()+1);   break
+            case LEFT:
+                do {
+                    this.setList(this.list-1)
+                } while(this.getList().length === 0);
+                break
+            case RIGHT:
+                do {
+                    this.setList(this.list+1)
+                } while(this.getList().length === 0);
+                break
         }
-        this.dispatchEvent(selectedChangedEvent)
+        console.log(this)
+        this.dispatchEvent(new Event(selectedChangedEvent))
     }
 }
 

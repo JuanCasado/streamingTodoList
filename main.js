@@ -34,6 +34,9 @@ function main() {
 
     addEventListener(inputs.saveButton, clickEvent, () => {
         const fileName = fileNameToStore(getText(inputs.saveText))
+        if (fileName === "") {
+            return
+        }
         saveFile(saveTodoJSON(), fileName, "application/json");
     })
 
@@ -91,23 +94,49 @@ function main() {
 
 
     document.addEventListener('keyup', (event)=>{
-        switch(event.key) {
-            case 'ArrowUp': selected.move(UP); return
-            case 'ArrowDown': selected.move(DOWN); return
-            case 'ArrowLeft': selected.move(LEFT); return
-            case 'ArrowRigth': selected.move(RIGHT); return
-            case 'w': selected.change(UP); return
-            case 's': selected.change(DOWN); return
-            case 'a': selected.change(LEFT); return
-            case 'd': selected.change(RIGHT); return
-            case 'q': selected.delete(); return
-            case 'e': selected.edit(); return
-            case 'Space': selected.toggle(); return
-        }
         console.log(event)
+        if (event.code === "Escape") {
+            inputs.saveText.blur()
+            inputs.addTodoText.blur()
+            selected.deactivate()
+        } else if(event.target === inputs.addTodoText) {
+            if (event.code === "Enter") {
+                inputs.addTodoButton.click()
+            }
+        } else if(event.target === inputs.saveText) {
+            if (event.code == "Enter") {
+                inputs.saveButton.click()
+            }
+        } else {
+            switch(event.code) {
+                case 'ArrowUp':     selected.move(UP);      return
+                case 'ArrowDown':   selected.move(DOWN);    return
+                case 'ArrowLeft':   selected.move(LEFT);    return
+                case 'ArrowRight':  selected.move(RIGHT);   return
+                case 'KeyW':           selected.change(UP);    return
+                case 'KeyS':           selected.change(DOWN);  return
+                case 'KeyA':           selected.change(LEFT);  return
+                case 'KeyD':           selected.change(RIGHT); return
+                case 'KeyQ':           selected.delete();      return
+                case 'KeyE':           selected.edit();        return
+                case 'Space':       selected.toggle();      return
+            }
+        }
     })
 
     addSelectedListener(selected, selectedChangedEvent, ()=>{
-
+        const item = selected.getItem()
+        // TODO: maybe we can avoid this for loop?
+        for (const element of document.getElementsByClassName(selectedClassname)) {
+            unselectElement(element)
+        }
+        if (item === null) {
+            return
+        }
+        if (selected.active) {
+            selectElement(item)
+        } else {
+            unselectElement(item)
+        }
     })
 }

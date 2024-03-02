@@ -131,7 +131,6 @@ button:active {
 text {
     flex: 2;
     display:inline-block;
-    background-color: white;
     vertical-align: middle;
     font-size: 1em;
     padding: 0.3em;
@@ -146,10 +145,14 @@ text {
 .item {
     display: flex;
     flex-direction: row;
-    background-color: white;
     border-radius: 8px;
     border: 3px solid black;
+    background-color: white;
     
     padding: 0.2em;
     margin: 0.1em;
+}
+
+.selected {
+    background-color: lightgray;
 }
