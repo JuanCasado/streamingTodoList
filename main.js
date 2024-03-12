@@ -92,13 +92,17 @@ function main() {
         setText(inputs.currentTimer, timers.current.getTime())
     })
 
-
-    document.addEventListener('keyup', (event)=>{
+    addEventListener(anyEmlement, mouseDownEvent, (event) => {
+        selected.selectElement(event.detail)
+    })
+    // TODO: double clicking on an element should edit it
+    addEventListener(document, keyEvent, (event) => {
         console.log(event)
         if (event.code === "Escape") {
             inputs.saveText.blur()
             inputs.addTodoText.blur()
             selected.deactivate()
+            // TODO: stop editing elements
         } else if(event.target === inputs.addTodoText) {
             if (event.code === "Enter") {
                 inputs.addTodoButton.click()
@@ -113,13 +117,21 @@ function main() {
                 case 'ArrowDown':   selected.move(DOWN);    return
                 case 'ArrowLeft':   selected.move(LEFT);    return
                 case 'ArrowRight':  selected.move(RIGHT);   return
-                case 'KeyW':           selected.change(UP);    return
-                case 'KeyS':           selected.change(DOWN);  return
-                case 'KeyA':           selected.change(LEFT);  return
-                case 'KeyD':           selected.change(RIGHT); return
-                case 'KeyQ':           selected.delete();      return
-                case 'KeyE':           selected.edit();        return
+                case 'KeyJ':        // fall-through
+                case 'KeyW':        selected.change(UP);    return
+                case 'KeyK':        // fall-through
+                case 'KeyS':        selected.change(DOWN);  return
+                case 'KeyH':        // fall-through
+                case 'KeyA':        selected.change(LEFT);  return
+                case 'KeyL':        // fall-through
+                case 'KeyD':        selected.change(RIGHT); return
+                case 'Delete':      // fall-through
+                case 'Backspace':   // fall-through
+                case 'KeyQ':        selected.delete();      return
+                case 'KeyE':        selected.edit();        return
                 case 'Space':       selected.toggle();      return
+                // TODO: save the edited element on Enter
+                // TODO: goto addTodoText on Enter
             }
         }
     })

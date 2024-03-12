@@ -40,6 +40,15 @@ class ItemList extends EventTarget {
         return null
     }
 
+    hasItem(id) {
+        for (const item of this.items) {
+            if (item.id === id) {
+                return true
+            }
+        }
+        return false
+    }
+
     remove(id) {
         const index = this.getIndex(id)
         if (index === null) {

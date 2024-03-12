@@ -1,6 +1,13 @@
 const clickEvent = "click"
+const keyEvent = "keyup"
+const mouseDownEvent = "mousedown"
 
 const inputNodeName = "INPUT"
+const textNodeName = "TEXT"
+const buttonNodeName = "BUTTON"
+const elementNodeName = "LI"
+
+const anyEmlement = new EventTarget()
 
 function getDOMInputs() {
     return {
@@ -55,13 +62,31 @@ function createElement(item, buttonActions = []) {
     const element = document.createElement('li')
     element.className = "item"
     element.id = item.id
+
     const itemText = document.createElement("text")
     itemText.innerText = item.text
     element.appendChild(itemText)
+
     for (const action of buttonActions) {
         const elementButton = createElementButton(action)
         element.appendChild(elementButton)
     }
+
+    element.addEventListener(mouseDownEvent, (event) => {
+        const element = event.target.nodeName === elementNodeName
+            ? event.target
+            : event.target.parentElement
+        anyEmlement.dispatchEvent(new CustomEvent(mouseDownEvent, {detail: element.id}))
+    })
+    return element
+}
+
+function createInput(item) {
+    // <input title="name of saved file"></input>
+    const element = document.createElement('input')
+    element.className = "item"
+    element.title = "element being edited"
+    element.value = item.text
     return element
 }
 
@@ -150,12 +175,13 @@ function unselectElement(item) {
 
 function editElement(item) {
     const element = document.getElementById(item.id)
-    
+    element.insertBefore(createInput(item), element.firstChild.nextSibling)
+    element.removeChild(element.firstChild)
 }
 
 function commitElement(item) {
+    // TODO: save the element
     const element = document.getElementById(item.id)
-    
 }
 
 function saveFile(content, fileName, contentType) {

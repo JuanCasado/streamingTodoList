@@ -31,31 +31,57 @@ class Selected extends EventTarget {
         return list[this.getIndex()]
     }
 
-    
+    selectElement(id) {
+        for (const listIndex in this.listArray) {
+            const list = this.listArray[listIndex]
+            if (list.hasItem(id)) {
+                const index = list.getIndex(id)
+                return this.select(listIndex, index)
+            }
+        }
+    }
+
     select(list, index) {
-        this.list = list
-        this.index = index
-        this.activate()
-        this.dispatchEvent(new Event(selectedChangedEvent))
+        if (this.list !== list || this.index !== index) {
+            this.list = list
+            this.index = index
+            this.activate()
+            // Will dispatch two events on new element clicked when not active 
+            this.dispatchEvent(new Event(selectedChangedEvent))
+        } else {
+            this.toggle()
+        }
     }
     
     deactivate() {
+        if (!this.active) {
+            return
+        }
         this.active = false
         this.dispatchEvent(new Event(selectedChangedEvent))
     }
+
     activate() {
+        if (this.active) {
+            return
+        }
         if (this.getItem() === null) {
+            // TODO: maybe search on another list?
             return
         }
         this.active = true
         this.dispatchEvent(new Event(selectedChangedEvent))
     }
+
     toggle() {
         if (this.getItem() === null) {
             return
         }
-        this.active = !this.active
-        this.dispatchEvent(new Event(selectedChangedEvent))
+        if (this.active) {
+            this.deactivate()
+        } else {
+            this.activate()
+        }
     }
 
     edit() {
@@ -65,8 +91,7 @@ class Selected extends EventTarget {
         if (this.getItem() === null) {
             return
         }
-        this.getItem()
-        this.getList().update()
+        editElement(this.getItem())
     }
 
     delete() {
