@@ -20,7 +20,7 @@ class ItemList extends EventTarget {
     }
 
     getIndex(id) {
-        for (const index in this.items) {
+        for (let index = 0; index < this.items.length; ++index) {
             const item = this.items[index]
             if (item.id === id) {
                 return index

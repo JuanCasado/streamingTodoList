@@ -1,12 +1,18 @@
-
+const duplicatedFile = /\(([^0-9]*)(\d+)([^0-9]*)\)$/;
 function fileNameToDisplay(fileName) {
     if (fileName.endsWith(".json") && fileName.length > 5) {
         fileName = fileName.slice(0, fileName.length - 5)
     }
-    return fileName
+    const match = fileName.match(duplicatedFile);
+    if (match) {
+        console.log(match)
+        fileName = fileName.replace(`(${match[2]})`, "")
+    }
+    return fileName.trim()
 }
 
 function fileNameToStore(fileName) {
+    fileName = fileName.trim()
     if (fileName === "") {
         fileName = `todo-${Date.now()}.json`
     }
@@ -45,7 +51,7 @@ function main() {
         loadTodoJSON(content)
         setText(inputs.saveText, fileNameToDisplay(name))
     })
-    
+
     addListListener(lists.toDo, listChangedEvent, () => {
         updateList(lists.toDo.getItems(), inputs.todoList, [
             createButtonAction(startButtonText, startItem),
@@ -71,7 +77,7 @@ function main() {
         ])
     })
 
-    
+
     addEventListener(inputs.startButton, clickEvent, async () => {
         startTimer(timers.elapsed)
         startTimer(timers.current)
@@ -92,12 +98,18 @@ function main() {
         setText(inputs.currentTimer, timers.current.getTime())
     })
 
-    addEventListener(anyEmlement, mouseDownEvent, (event) => {
+    addEventListener(anyEmlement, clickEvent, (event) => {
         selected.selectElement(event.detail)
     })
-    // TODO: double clicking on an element should edit it
+
+    addEventListener(anyEmlement, doubleClickEvent, (event) => {
+        selected.selectElement(event.detail)
+        selected.edit()
+    })
+
     addEventListener(document, keyEvent, (event) => {
         console.log(event)
+        console.log(event.target)
         if (event.code === "Escape") {
             inputs.saveText.blur()
             inputs.addTodoText.blur()
@@ -130,25 +142,47 @@ function main() {
                 case 'KeyQ':        selected.delete();      return
                 case 'KeyE':        selected.edit();        return
                 case 'Space':       selected.toggle();      return
-                // TODO: save the edited element on Enter
-                // TODO: goto addTodoText on Enter
+                case 'Tab':
+                    if (event.target === inputs.addTodoButton
+                    || event.target === inputs.addTodoText) {
+                        inputs.saveText.focus()
+                        event.preventDefault()
+                    } else if (event.target === inputs.saveButton
+                        || event.target === inputs.addSaveText) {
+                        inputs.addTodoText.focus()
+                        event.preventDefault()
+                    }
+                break
+                case 'Enter':
+                    if (event.target.nodeName !== inputNodeName) {
+                        inputs.addTodoText.focus()
+                    } else {
+                        // TODO: save the edited element on Enter
+
+                    }
+                break
             }
         }
     })
 
     addSelectedListener(selected, selectedChangedEvent, ()=>{
         const item = selected.getItem()
-        // TODO: maybe we can avoid this for loop?
-        for (const element of document.getElementsByClassName(selectedClassname)) {
-            unselectElement(element)
-        }
         if (item === null) {
             return
-        }
-        if (selected.active) {
+        } else if (selected.active) {
             selectElement(item)
         } else {
             unselectElement(item)
         }
     })
+
+    // TODO: do this every time a new timeline is created not with a timer
+    setTimeout(() => {
+        const h = (Math.floor(Math.random() * 360) + 1)
+            .toString(10)
+            .padStart(2, '0')
+        const s = "100%"
+        const l = "70%"
+        document.documentElement.style.setProperty('--rand-color', `hsl(${h}, ${s}, ${l})`)
+    }, 100)
 }

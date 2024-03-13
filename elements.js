@@ -1,6 +1,6 @@
 const clickEvent = "click"
+const doubleClickEvent = "dblclick"
 const keyEvent = "keyup"
-const mouseDownEvent = "mousedown"
 
 const inputNodeName = "INPUT"
 const textNodeName = "TEXT"
@@ -14,14 +14,14 @@ function getDOMInputs() {
         todoList: document.getElementById("todo-list" ),
         onProgressList: document.getElementById("on-progress-list"),
         doneList: document.getElementById("done-list" ),
-        
+
         addTodoText: document.getElementById("add-todo-text"),
         addTodoButton: document.getElementById("add-todo-button"),
-        
+
         startTimer: document.getElementById("start-timer"),
         elapsedTimer: document.getElementById("elapsed-timer"),
         currentTimer: document.getElementById("current-timer"),
-        
+
         startButton: document.getElementById("start"),
         stopButton: document.getElementById("sop"),
         clearButton: document.getElementById("clear"),
@@ -57,6 +57,19 @@ function createElementButton(buttonAction) {
     return elementButton
 }
 
+function dispatchEventToAnyElement(event) {
+    if (event.target.nodeName === elementNodeName) {
+        anyEmlement.dispatchEvent(new CustomEvent(event.type, {
+            detail: event.target.id
+        }))
+    } else if (event.target.nodeName === textNodeName
+            || event.target.nodeName === inputNodeName) {
+        anyEmlement.dispatchEvent(new CustomEvent(event.type, {
+            detail: event.target.parentElement.id
+        }))
+    }
+}
+
 function createElement(item, buttonActions = []) {
     // <li id="uuid" class="item"><text>{text}</text><button>START</button></li>
     const element = document.createElement('li')
@@ -72,12 +85,9 @@ function createElement(item, buttonActions = []) {
         element.appendChild(elementButton)
     }
 
-    element.addEventListener(mouseDownEvent, (event) => {
-        const element = event.target.nodeName === elementNodeName
-            ? event.target
-            : event.target.parentElement
-        anyEmlement.dispatchEvent(new CustomEvent(mouseDownEvent, {detail: element.id}))
-    })
+    element.addEventListener(clickEvent, dispatchEventToAnyElement)
+    element.addEventListener(doubleClickEvent, dispatchEventToAnyElement)
+
     return element
 }
 
@@ -127,7 +137,7 @@ function filterElements(list1, list2) {
                 missing = false
                 break
             }
-        }   
+        }
         if (missing) {
             result.push(elemten1)
         }

@@ -17,7 +17,7 @@ class Selected extends EventTarget {
     getList() {
         return this.listArray[this.list]
     }
-    
+
     getIndex() {
         return Math.max(Math.min(this.getList().length-1, this.index), 0)
     }
@@ -32,7 +32,7 @@ class Selected extends EventTarget {
     }
 
     selectElement(id) {
-        for (const listIndex in this.listArray) {
+        for (let listIndex = 0; listIndex < this.listArray.length; ++listIndex) {
             const list = this.listArray[listIndex]
             if (list.hasItem(id)) {
                 const index = list.getIndex(id)
@@ -43,6 +43,7 @@ class Selected extends EventTarget {
 
     select(list, index) {
         if (this.list !== list || this.index !== index) {
+            this.deactivate()
             this.list = list
             this.index = index
             this.activate()
@@ -52,7 +53,7 @@ class Selected extends EventTarget {
             this.toggle()
         }
     }
-    
+
     deactivate() {
         if (!this.active) {
             return
@@ -66,7 +67,15 @@ class Selected extends EventTarget {
             return
         }
         if (this.getItem() === null) {
-            // TODO: maybe search on another list?
+            for (let i = 1; i < this.listArray.length; ++i) {
+                const newList = (this.list + i) % this.listArray.length
+                if (this.listArray[newList].length !== 0) {
+                    this.setList(newList)
+                    break
+                }
+            }
+        }
+        if (this.getItem() === null) {
             return
         }
         this.active = true
@@ -74,9 +83,6 @@ class Selected extends EventTarget {
     }
 
     toggle() {
-        if (this.getItem() === null) {
-            return
-        }
         if (this.active) {
             this.deactivate()
         } else {
@@ -143,7 +149,6 @@ class Selected extends EventTarget {
                 this.setList(this.list+1)
                 this.getList().push(itemToMove)
                 this.setIndex(this.getList().length-1)
-                
             } break
         }
         this.dispatchEvent(new Event(selectedChangedEvent))
