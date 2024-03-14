@@ -76,8 +76,7 @@ function createElement(item, buttonActions = []) {
     element.className = "item"
     element.id = item.id
 
-    const itemText = document.createElement("text")
-    itemText.innerText = item.text
+    const itemText = createText(item)
     element.appendChild(itemText)
 
     for (const action of buttonActions) {
@@ -89,6 +88,12 @@ function createElement(item, buttonActions = []) {
     element.addEventListener(doubleClickEvent, dispatchEventToAnyElement)
 
     return element
+}
+
+function createText(item) {
+    const itemText = document.createElement("text")
+    itemText.innerText = item.text
+    return itemText
 }
 
 function createInput(item) {
@@ -190,8 +195,9 @@ function editElement(item) {
 }
 
 function commitElement(item) {
-    // TODO: save the element
     const element = document.getElementById(item.id)
+    element.insertBefore(createText(item), element.firstChild.nextSibling)
+    element.removeChild(element.firstChild)
 }
 
 function saveFile(content, fileName, contentType) {
@@ -211,4 +217,24 @@ async function loadFile() {
     } else {
         console.error(`Unexpected number of files: ${files.length}`)
     }
+}
+
+function click(htmlButton) {
+    htmlButton.click()
+}
+
+function focus(htmlElement) {
+    htmlElement.focus()
+}
+
+function unfocus(htmlElement) {
+    htmlElement.blur()
+}
+
+function focusElement(id) {
+    focus(document.getElementById(id).firstChild)
+}
+
+function unfocusElement(id) {
+    unfocus(document.getElementById(id).firstChild)
 }

@@ -231,6 +231,33 @@ function cancelItem(id) {
     toDo.push(item)
 }
 
+// Fetching from any list
+
+function getList(id) {
+    for (const list of Object.values(getItemLists())) {
+        if (list.hasItem(id)) {
+            return list
+        }
+    }
+    return null
+}
+
+function getItem(id) {
+    const list = getList(id)
+    if (list === null) {
+        return null
+    }
+    return list.getItem(id)
+}
+
+function getIndex(id) {
+    const list = getList(id)
+    if (list === null) {
+        return null
+    }
+    return list.getIndex(id)
+}
+
 // Other actions
 
 function clear() {

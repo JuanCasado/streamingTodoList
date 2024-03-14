@@ -26,7 +26,7 @@ function main() {
     const inputs = getDOMInputs()
     const lists = getItemLists()
     const timers = getTimersLists()
-    const selected = getSelected([lists.toDo, lists.onProgress, lists.done])
+    const selected = getSelected(Object.values(lists))
 
     addEventListener(inputs.addTodoButton, clickEvent, () => {
         const text = getText(inputs.addTodoText)
@@ -104,24 +104,30 @@ function main() {
 
     addEventListener(anyEmlement, doubleClickEvent, (event) => {
         selected.selectElement(event.detail)
-        selected.edit()
+        const item = selected.getItem()
+        if (item !== null) {
+            editElement(item)
+            focusElement(item.id)
+            selected.deactivate()
+        }
     })
 
     addEventListener(document, keyEvent, (event) => {
-        console.log(event)
-        console.log(event.target)
         if (event.code === "Escape") {
-            inputs.saveText.blur()
-            inputs.addTodoText.blur()
+            unfocus(inputs.saveText)
+            unfocus(inputs.addTodoText)
             selected.deactivate()
-            // TODO: stop editing elements
+            const item = selected.getItem()
+            if (item !== null) {
+                commitElement(item)
+            }
         } else if(event.target === inputs.addTodoText) {
             if (event.code === "Enter") {
-                inputs.addTodoButton.click()
+                click(inputs.addTodoButton)
             }
         } else if(event.target === inputs.saveText) {
             if (event.code == "Enter") {
-                inputs.saveButton.click()
+                click(inputs.saveButton)
             }
         } else {
             switch(event.code) {
@@ -137,28 +143,39 @@ function main() {
                 case 'KeyA':        selected.change(LEFT);  return
                 case 'KeyL':        // fall-through
                 case 'KeyD':        selected.change(RIGHT); return
-                case 'Delete':      // fall-through
-                case 'Backspace':   // fall-through
-                case 'KeyQ':        selected.delete();      return
-                case 'KeyE':        selected.edit();        return
+                case 'Delete':      selected.delete();      return
                 case 'Space':       selected.toggle();      return
+                case 'KeyE': {
+                    const item = selected.getItem()
+                    if (item !== null) {
+                        editElement(item)
+                        focusElement(item.id)
+                        selected.deactivate()
+                    }
+                    console.log(selected)
+                } return
                 case 'Tab':
                     if (event.target === inputs.addTodoButton
                     || event.target === inputs.addTodoText) {
-                        inputs.saveText.focus()
+                        focus(inputs.saveText)
                         event.preventDefault()
                     } else if (event.target === inputs.saveButton
                         || event.target === inputs.addSaveText) {
-                        inputs.addTodoText.focus()
+                        focus(inputs.addTodoText)
                         event.preventDefault()
                     }
                 break
                 case 'Enter':
                     if (event.target.nodeName !== inputNodeName) {
-                        inputs.addTodoText.focus()
+                        focus(inputs.addTodoText)
                     } else {
-                        // TODO: save the edited element on Enter
-
+                        const text = getText(event.target)
+                        const item = getItem(event.target.parentElement.id)
+                        if (item !== null) {
+                            item.text = text
+                            commitElement(item)
+                            selected.selectElement(item.id)
+                        }
                     }
                 break
             }

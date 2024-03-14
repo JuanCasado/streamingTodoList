@@ -90,16 +90,6 @@ class Selected extends EventTarget {
         }
     }
 
-    edit() {
-        if (!this.active) {
-            return
-        }
-        if (this.getItem() === null) {
-            return
-        }
-        editElement(this.getItem())
-    }
-
     delete() {
         if (!this.active) {
             return
@@ -159,8 +149,8 @@ class Selected extends EventTarget {
     }
 
     setList(list) {
-        if (list < 0) {
-            list = this.listArray.length + (-1 * list)
+        while (list < 0) {
+            list += this.listArray.length
         }
         this.list = Math.max(Math.min(list % this.listArray.length, this.listArray.length-1), 0)
     }
