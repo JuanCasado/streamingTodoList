@@ -72,6 +72,7 @@ class ItemList extends EventTarget {
 
     load(json) {
         this.items.length = 0
+        this.dispatchEvent(new Event(removeItemEvent))
         for (const item of json["items"]) {
             const id = item["id"]
             const text = item["text"]
@@ -79,18 +80,17 @@ class ItemList extends EventTarget {
             const startedAt = item["startedAt"]
             const stoppedAt = item["stoppedAt"]
             const completedAt = item["completedAt"]
-            this.items.push(new Item(
+            const color = item["color"] ? item["color"] : randomHtmlColor()
+            this.push(new Item(
                 id,
                 text,
                 createdAt? new Date(createdAt) : null,
                 startedAt.map(date => new Date(date)),
                 stoppedAt.map(date => new Date(date)),
                 completedAt? new Date(createdAt) : null,
+                color
             ))
         }
-        this.dispatchEvent(new Event(listChangedEvent))
-        this.dispatchEvent(new Event(removeItemEvent))
-        this.dispatchEvent(new Event(pushItemEvent))
     }
 
     getItems() {
@@ -122,14 +122,24 @@ function addListListener(list, event, callback) {
     list.addEventListener(event, callback);
 }
 
+function randomHtmlColor() {
+    const h = (Math.floor(Math.random() * 360) + 1)
+        .toString(10)
+        .padStart(2, '0')
+    const s = "100%"
+    const l = "70%"
+    return `hsl(${h}, ${s}, ${l})`
+}
+
 class Item {
-    constructor(id, text, createdAt, startedAt, stoppedAt, completedAt) {
+    constructor(id, text, createdAt, startedAt, stoppedAt, completedAt, color) {
         this.id = id
         this.text = text
         this.createdAt = createdAt
         this.startedAt = Array.isArray(startedAt)? startedAt : [startedAt]
         this.stoppedAt = Array.isArray(stoppedAt)? stoppedAt : [stoppedAt]
         this.completedAt = completedAt
+        this.color = color
     }
 }
 
@@ -152,6 +162,7 @@ function createTodoItem(text) {
         startedAt,
         stoppedAt,
         completedAt,
+        randomHtmlColor(),
     ))
 }
 

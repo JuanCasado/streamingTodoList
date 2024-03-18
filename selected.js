@@ -176,7 +176,6 @@ class Selected extends EventTarget {
                 } while(this.getList().length === 0);
                 break
         }
-        console.log(this)
         this.dispatchEvent(new Event(selectedChangedEvent))
     }
 }

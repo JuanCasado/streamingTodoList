@@ -129,7 +129,6 @@ button {
     align-items: center;
     justify-content: center;
 
-    background-color: var(--rand-color);
     border: 2px solid black;
 }
 

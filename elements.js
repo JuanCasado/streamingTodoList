@@ -29,6 +29,8 @@ function getDOMInputs() {
 
         saveText: document.getElementById("save-text"),
         saveButton: document.getElementById("save"),
+
+        timeline: document.getElementById("timeline"),
     }
 }
 
@@ -76,7 +78,7 @@ function createElement(item, buttonActions = []) {
     element.className = "item"
     element.id = item.id
 
-    const itemText = createText(item)
+    const itemText = createText(item.text)
     element.appendChild(itemText)
 
     for (const action of buttonActions) {
@@ -90,10 +92,10 @@ function createElement(item, buttonActions = []) {
     return element
 }
 
-function createText(item) {
-    const itemText = document.createElement("text")
-    itemText.innerText = item.text
-    return itemText
+function createText(text) {
+    const htmlText = document.createElement("text")
+    htmlText.innerText = text
+    return htmlText
 }
 
 function createInput(item) {
@@ -196,7 +198,7 @@ function editElement(item) {
 
 function commitElement(item) {
     const element = document.getElementById(item.id)
-    element.insertBefore(createText(item), element.firstChild.nextSibling)
+    element.insertBefore(createText(item.text), element.firstChild.nextSibling)
     element.removeChild(element.firstChild)
 }
 
@@ -237,4 +239,27 @@ function focusElement(id) {
 
 function unfocusElement(id) {
     unfocus(document.getElementById(id).firstChild)
+}
+
+function createTimeFragment(text, secsDuration, color) {
+    // <div class="time-fragment"><text>Hello1</text></div>
+    const timeFragment = document.createElement('div')
+    timeFragment.className = "time-fragment"
+    timeFragment.style = `flex: ${secsDuration}; background-color: ${color}`
+
+    const timeFragmentText = createText(`${text} : ${Math.round(secsDuration)}s`)
+
+    timeFragment.appendChild(timeFragmentText)
+
+    return timeFragment
+}
+
+function appendToTimeline(timeline, text, secsDuration, color) {
+    timeline.appendChild(createTimeFragment(text, secsDuration, color))
+}
+
+function clearTimeline(timeline) {
+    while (timeline.lastElementChild) {
+        timeline.removeChild(timeline.lastElementChild)
+    }
 }

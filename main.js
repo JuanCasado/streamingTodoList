@@ -5,7 +5,6 @@ function fileNameToDisplay(fileName) {
     }
     const match = fileName.match(duplicatedFile);
     if (match) {
-        console.log(match)
         fileName = fileName.replace(`(${match[2]})`, "")
     }
     return fileName.trim()
@@ -36,6 +35,7 @@ function main() {
 
     addEventListener(inputs.clearButton, clickEvent, () => {
         clear()
+        clearTimeline(inputs.timeline)
     })
 
     addEventListener(inputs.saveButton, clickEvent, () => {
@@ -48,8 +48,10 @@ function main() {
 
     addEventListener(inputs.loadButton, clickEvent, async () => {
         const [name, content] = await loadFile()
+        click(inputs.clearButton)
         loadTodoJSON(content)
         setText(inputs.saveText, fileNameToDisplay(name))
+        recomputeTimeline(timeline, Object.values(lists))
     })
 
     addListListener(lists.toDo, listChangedEvent, () => {
@@ -77,6 +79,17 @@ function main() {
         ])
     })
 
+    addListListener(lists.done, pushItemEvent, () => {
+        const lastItem = lists.done.items[lists.done.items.length - 1]
+        if (lastItem.startedAt.length === lastItem.stoppedAt.length) {
+            const startTime = lastItem.startedAt[lastItem.startedAt.length - 1]
+            const endTime = lastItem.stoppedAt[lastItem.stoppedAt.length - 1]
+            const secsDuration = Math.abs((endTime - startTime) / 1000)
+            appendToTimeline(inputs.timeline, lastItem.text, secsDuration, lastItem.color)
+        } else {
+            console.error(`Item with id=${id} is broken`)
+        }
+    })
 
     addEventListener(inputs.startButton, clickEvent, async () => {
         startTimer(timers.elapsed)
@@ -152,7 +165,6 @@ function main() {
                         focusElement(item.id)
                         selected.deactivate()
                     }
-                    console.log(selected)
                 } return
                 case 'Tab':
                     if (event.target === inputs.addTodoButton
@@ -192,14 +204,31 @@ function main() {
             unselectElement(item)
         }
     })
+}
 
-    // TODO: do this every time a new timeline is created not with a timer
-    setTimeout(() => {
-        const h = (Math.floor(Math.random() * 360) + 1)
-            .toString(10)
-            .padStart(2, '0')
-        const s = "100%"
-        const l = "70%"
-        document.documentElement.style.setProperty('--rand-color', `hsl(${h}, ${s}, ${l})`)
-    }, 100)
+function sortTimeFragment(lhs, rhs) {
+    return lhs.start < rhs.start
+}
+
+function recomputeTimeline(timeline, lists) {
+    clearTimeline(timeline)
+    const timeFragments = []
+    for (const list of lists) {
+        for (const item of list.getItems()) {
+            for (let i = 0; i < Math.min(item.startedAt.length, item.stoppedAt.length); ++i) {
+                timeFragments.push({
+                    text: item.text,
+                    color: item.color,
+                    start: item.startedAt[i],
+                    stop: item.stoppedAt[i],
+                })
+            }
+        }
+    }
+
+    timeFragments.sort(sortTimeFragment)
+    for (const timeFragment of timeFragments) {
+        const secsDuration = Math.abs((timeFragment.stop - timeFragment.start) / 1000)
+        appendToTimeline(timeline, timeFragment.text, secsDuration, timeFragment.color)
+    }
 }
