@@ -1,0 +1,25 @@
+FROM docker:24.0.7-cli
+FROM jcb:go
+
+COPY --from=docker /usr/local/bin/docker /usr/local/bin/
+
+RUN apt-get update &&\
+    apt-get install -y openssh-server
+
+ARG DEV_USER=dev
+ARG DEV_SHELL=/bin/bash
+ENV DEV_USER=$DEV_USER
+ENV DEV_SHELL=$DEV_SHELL
+
+RUN useradd -ms $DEV_SHELL $DEV_USER &&\
+    mkdir -p /home/$DEV_USER/.ssh/ &&\
+    touch /home/$DEV_USER/.hushlogin
+
+ENTRYPOINT  \
+    echo $SSH_PUB_KEY > /home/$DEV_USER/.ssh/authorized_keys &&\
+    sed -i -e 's/.*PermitUserEnvironment.*/PermitUserEnvironment yes/g' /etc/ssh/sshd_config &&\
+    echo "SSH_PUB_KEY=$SSH_PUB_KEY" &&\
+    echo "SSH_PATH=$PATH" >> /home/$DEV_USER/.ssh/environment &&\
+    echo "PATH=\$SSH_PATH:\$PATH" >> /home/$DEV_USER/.bashrc &&\
+    service ssh restart &&\
+    su $DEV_USER --command $DEV_SHELL

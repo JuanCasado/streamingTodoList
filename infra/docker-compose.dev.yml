@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  go-dev:
+    image: jcb:go-dev
+    build:
+      context: .
+      dockerfile: ./Dockerfile.go-dev

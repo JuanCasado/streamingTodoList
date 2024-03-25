@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  stl-server:
+    extends:
+      file: infra/docker-compose.defaults.yml
+      service: go-dev
+
+    volumes:
+      - ./src:/home/dev/code/src
+
+    ports:
+      - "4200:80"

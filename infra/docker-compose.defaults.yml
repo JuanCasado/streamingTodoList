@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  go-dev:
+    image: jcb:go-dev
+    build: .
+    privileged: true
+    hostname: go
+    stdin_open: true
+    env_file:
+      - .env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/home/dev/code/infra
+    ports:
+      - "6900:22"
