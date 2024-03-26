@@ -204,6 +204,24 @@ function main() {
             unselectElement(item)
         }
     })
+
+    addEventListener(inputs.editButton, clickEvent, async () => {
+        console.log("Requesting video edit!")
+        const response = await fetch(getText(inputs.editText)+'/editVideo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'User-Agent': 'stl-web',
+                'X-Request-Id': crypto.randomUUID(),
+            },
+            body: saveTodoJSON(),
+        })
+
+        const id = response.headers.get('X-Response-Id')
+        const content = await response.text()
+        console.log(`Response ${id}: ${content}`)
+        console.log(response)
+    })
 }
 
 function sortTimeFragment(lhs, rhs) {

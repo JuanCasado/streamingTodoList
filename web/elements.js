@@ -30,6 +30,9 @@ function getDOMInputs() {
         saveText: document.getElementById("save-text"),
         saveButton: document.getElementById("save"),
 
+        editText: document.getElementById("edit-text"),
+        editButton: document.getElementById("edit"),
+
         timeline: document.getElementById("timeline"),
     }
 }

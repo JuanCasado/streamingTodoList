@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  stl-server:
+  stl-server-dev:
     extends:
       file: infra/docker-compose.defaults.yml
       service: go-dev
@@ -10,4 +10,17 @@ services:
       - ./src:/home/dev/code/src
 
     ports:
-      - "4200:80"
+      - "4201:8080"
+
+  stl-server-prod:
+    image: jcb:go
+
+    volumes:
+      - ./src:/app
+
+    ports:
+      - "4200:8080"
+
+    working_dir: /app
+    entrypoint: go
+    command: run .
